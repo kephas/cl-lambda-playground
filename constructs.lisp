@@ -16,6 +16,8 @@
 
 (defun make-expression (sexpr)
   (typecase sexpr
+    (expression
+     sexpr)
     ((or character string)
      (make-instance 'variable :name sexpr))
     (symbol
