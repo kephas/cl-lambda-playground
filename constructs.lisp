@@ -1,3 +1,5 @@
+(in-package :thierry-technologies.com/2011/07/lambda)
+
 (defclass expression () ())
 
 (defclass variable (expression)

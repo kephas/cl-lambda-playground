@@ -1,3 +1,5 @@
+(in-package :thierry-technologies.com/2011/07/lambda)
+
 (defgeneric render (expression &key rightmost))
 
 (defmethod render ((expression abstraction) &key (rightmost t))
