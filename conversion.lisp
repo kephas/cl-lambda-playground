@@ -59,3 +59,15 @@
 
 (defmethod normal-order ((expression application) &optional acc)
   (normal-order (app-fun expression) expression))
+
+
+(defgeneric applicative-order (expression &optional acc))
+
+(defmethod applicative-order ((expression variable) &optional acc)
+  acc)
+
+(defmethod applicative-order ((expression abstraction) &optional acc)
+  (applicative-order (abs-body expression)))
+
+(defmethod applicative-order ((expression application) &optional acc)
+  (applicative-order (app-fun expression) expression))
