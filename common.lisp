@@ -37,7 +37,7 @@
 (defvar *pred* (make-expression '(lambda n (lambda f (lambda x (n (lambda g (lambda h (h (g f)))) (lambda u x) (lambda u u)))))))
 (defvar *sub* (make-expression `(lambda m (lambda n (n ,*pred* m)))))
 
-(defvar *mult* (make-expression '(lambda m (lambda n (m (n f) x)))))
+(defvar *mult* (make-expression '(lambda m (lambda n (lambda f (lambda x (m (n f) x)))))))
 (defvar *exp* (normalize #'normal-order (make-expression `(lambda m (lambda n (m (,*mult* n) ,(church-num 1)))))))
 
 (defvar *zero?* (make-expression `(lambda n (n (lambda x ,*false*) ,*true*))))
@@ -52,3 +52,11 @@
 (defun unchurch-num (expression)
   (eval (read-from-string (format nil "(let ((zero 0))(~a)) "
 				  (render (normalize #'normal-order (make-expression (list expression '1+ 'zero))))))))
+
+(defmethod make-expression ((sexpr integer) &optional environment)
+  (church-num sexpr))
+
+
+#| to demonstrate fixed-point combinators |#
+
+(defvar *fac* (make-expression `(lambda fac (lambda n ((,*zero?* n) ,(church-num 1) (,*mult* n (fac (,*pred* n))))))))
