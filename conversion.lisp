@@ -74,3 +74,24 @@
 
 (defmethod applicative-order ((expression application) &optional candidate previous-candidates)
   (applicative-order (app-fun expression) expression previous-candidates))
+
+
+#| Finding a normal form |#
+
+(defun normalize (strategy expression)
+  (multiple-value-bind (reduction progress) (reduce strategy expression)
+    (if progress
+	(normalize strategy reduction)
+	reduction)))
+
+(defun normalization-steps (strategy expression)
+  (labels ((rec (sub-expression acc)
+	     (multiple-value-bind (reduction progress) (reduce strategy sub-expression)
+	       (if progress
+		   (rec reduction (cons reduction acc))
+		   (reverse acc)))))
+    (rec expression (list expression))))
+
+(defun show-normalization-steps (strategy expression &optional (stream t))
+  (dolist (step (normalization-steps strategy expression))
+    (format stream "~a~%" (render step :redex (funcall strategy step)))))
