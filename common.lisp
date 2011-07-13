@@ -26,3 +26,25 @@
 
 (defvar *Y* (make-expression '((lambda p (lambda f (p f (p f)))) (lambda f (lambda x (f (x x)))))))
 (defvar *theta* (make-expression '((lambda q (q q)) (lambda x (lambda y (y (x x y)))))))
+
+
+#| Church numerals |#
+
+(defvar *zero* (make-expression '(lambda f (lambda x x))))
+
+(defvar *plus* (make-expression '(lambda m (lambda n (m f (n f x))))))
+(defvar *succ* (normalize #'normal-order (make-expression (list *plus* (church-num 1))))
+(defvar *pred* (make-expression '(lambda n (lambda f (lambda x (n (lambda g (lambda h (h (g f)))) (lambda u x) (lambda u u)))))))
+(defvar *sub* (make-expression `(lambda m (lambda n (n ,*pred* m)))))
+
+(defvar *mult* (make-expression '(lambda m (lambda n (m (n f) x)))))
+(defvar *exp* (normalize #'normal-order (make-expression `(lambda m (lambda n (m (,*mult* n) ,(church-num 1)))))))
+
+(defvar *zero?* (make-expression `(lambda n (n (lambda x ,*false*) ,*true*))))
+
+(defun church-num (n)
+  (labels ((rec (n acc)
+	     (if (zerop n)
+		 acc
+		 (rec (1- n) (list 'f acc)))))
+    (make-expression `(lambda f (lambda x ,(rec n 'x))))))
