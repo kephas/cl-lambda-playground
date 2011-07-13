@@ -67,7 +67,7 @@
   acc)
 
 (defmethod applicative-order ((expression abstraction) &optional acc)
-  (applicative-order (abs-body expression)))
+  (applicative-order (abs-body expression) acc))
 
 (defmethod applicative-order ((expression application) &optional acc)
   (applicative-order (app-fun expression) expression))
