@@ -48,3 +48,7 @@
 		 acc
 		 (rec (1- n) (list 'f acc)))))
     (make-expression `(lambda f (lambda x ,(rec n 'x))))))
+
+(defun unchurch-num (expression)
+  (eval (read-from-string (format nil "(let ((zero 0))(~a)) "
+				  (render (normalize #'normal-order (make-expression (list expression '1+ 'zero))))))))
