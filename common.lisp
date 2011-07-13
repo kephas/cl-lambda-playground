@@ -20,3 +20,9 @@
 (defvar *and* (make-expression '(lambda p (lambda q (p q p)))))
 (defvar *or* (make-expression '(lambda p (lambda q (p p q)))))
 (defvar *not* (make-expression `(lambda x (x ,*false* ,*true*))))
+
+
+#| Fixed-point combinators |#
+
+(defvar *Y* (make-expression '((lambda p (lambda f (p f (p f)))) (lambda f (lambda x (f (x x)))))))
+(defvar *theta* (make-expression '((lambda q (q q)) (lambda x (lambda y (y (x x y)))))))
