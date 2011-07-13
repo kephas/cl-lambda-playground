@@ -49,25 +49,28 @@
 
 #| Evaluation strategies |#
 
-(defgeneric normal-order (expression &optional acc))
+(defgeneric normal-order (expression &optional candidate right-sides))
 
-(defmethod normal-order ((expression variable) &optional acc)
-  acc)
+(defmethod normal-order ((expression variable) &optional candidate right-sides)
+  (when right-sides
+    (normal-order (first right-sides) nil (rest right-sides))))
 
-(defmethod normal-order ((expression abstraction) &optional acc)
-  (if acc acc (normal-order (abs-body expression))))
+(defmethod normal-order ((expression abstraction) &optional candidate right-sides)
+  (if candidate
+      candidate
+      (normal-order (abs-body expression) nil right-sides)))
 
-(defmethod normal-order ((expression application) &optional acc)
-  (normal-order (app-fun expression) expression))
+(defmethod normal-order ((expression application) &optional candidate right-sides)
+  (normal-order (app-fun expression) expression (cons (app-arg expression) right-sides)))
 
 
-(defgeneric applicative-order (expression &optional acc))
+(defgeneric applicative-order (expression &optional candidate previous-candidates))
 
-(defmethod applicative-order ((expression variable) &optional acc)
-  acc)
+(defmethod applicative-order ((expression variable) &optional candidate previous-candidates)
+  (first previous-candidates))
 
-(defmethod applicative-order ((expression abstraction) &optional acc)
-  (applicative-order (abs-body expression) acc))
+(defmethod applicative-order ((expression abstraction) &optional candidate previous-candidates)
+  (applicative-order (abs-body expression) nil (if candidate (cons candidate previous-candidates) previous-candidates)))
 
-(defmethod applicative-order ((expression application) &optional acc)
-  (applicative-order (app-fun expression) expression))
+(defmethod applicative-order ((expression application) &optional candidate previous-candidates)
+  (applicative-order (app-fun expression) expression previous-candidates))
