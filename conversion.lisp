@@ -92,6 +92,12 @@
 		   (reverse acc)))))
     (rec expression (list expression))))
 
-(defun show-normalization-steps (strategy expression &optional (stream t))
-  (dolist (step (normalization-steps strategy expression))
-    (format stream "~a~%" (render step :redex (funcall strategy step)))))
+(defun show-normalization-steps (strategy expression &key interactive (stream t))
+  (labels ((rec (sub-expression)
+	     (format stream "~a~%" (render sub-expression :redex (funcall strategy sub-expression)))
+	     (multiple-value-bind (reduction progress) (reduce strategy sub-expression)
+	       (when progress
+		 (when interactive
+		   (read-line *query-io*))
+		 (rec reduction)))))
+    (rec expression)))
