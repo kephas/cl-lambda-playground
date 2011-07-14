@@ -1,5 +1,8 @@
 (in-package :thierry-technologies.com/2011/07/lambda)
 
+
+#| Basic constructs of lambda calculus |#
+
 (defclass expression () ())
 
 (defclass variable (expression)
@@ -13,6 +16,23 @@
   ((function :accessor app-fun :initarg :fun)
    (argument :accessor app-arg :initarg :arg)))
 
+
+#| A hidden abstraction is rendered by its name
+instead of its content |#
+
+(defclass hidden-abstraction (abstraction)
+  ((content :reader hid-abs :initarg :abs)
+   (name :reader hid-name :initarg :name)))
+
+(defmethod abs-var ((object hidden-abstraction))
+  (abs-var (hid-abs object)))
+
+(defmethod abs-body ((object hidden-abstraction))
+  (abs-body (hid-abs object)))
+
+
+
+#| Building of lambda expressions for symbolic expressions |#
 
 (defgeneric make-expression (sexpr &optional environment))
 

@@ -6,6 +6,9 @@
   (let ((rendering (format nil "λ~a.~a" (render (abs-var expression) redex) (render (abs-body expression) redex))))
     (if rightmost rendering (format nil "(~a)" rendering))))
 
+(defmethod render ((expression hidden-abstraction) &key rightmost redex)
+  (hid-name expression))
+
 (defmethod render ((expression variable) &key rightmost redex)
   (var-name expression))
 
