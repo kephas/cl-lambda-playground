@@ -40,7 +40,10 @@ instead of its content |#
   sexpr)
 
 (defmethod make-expression ((sexpr string)  &optional environment)
-  (make-instance 'variable :name sexpr))
+  (let ((hidden (find sexpr environment :key #'hid-name :test #'equal)))
+    (if hidden
+	hidden
+	(make-instance 'variable :name sexpr))))
 
 (defmethod make-expression ((sexpr symbol)  &optional environment)
   (make-expression (string-downcase (symbol-name sexpr))))
@@ -50,12 +53,14 @@ instead of its content |#
     ((lambda) (make-instance 'abstraction :var (make-expression (second sexpr)) :body (make-expression (third sexpr) environment)))
     (t (make-applications-chain
 	(make-instance 'application :fun (make-expression (first sexpr) environment) :arg (make-expression (second sexpr) environment))
-	(cddr sexpr)))))
+	(cddr sexpr)
+	environment))))
 
-(defun make-applications-chain (fun sexpr)
+(defun make-applications-chain (fun sexpr &optional environment)
   (if (null sexpr)
       fun
       (make-applications-chain (make-instance 'application
 					      :fun fun
-					      :arg (make-expression (first sexpr)))
-			       (rest sexpr))))
+					      :arg (make-expression (first sexpr) environment))
+			       (rest sexpr)
+			       environment)))

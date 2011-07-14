@@ -54,7 +54,7 @@
 				  (render (normalize #'normal-order (make-expression (list expression '1+ 'zero))))))))
 
 (defmethod make-expression ((sexpr integer) &optional environment)
-  (church-num sexpr))
+  (make-instance 'hidden-abstraction :name sexpr :abs (church-num sexpr)))
 
 
 #| to demonstrate fixed-point combinators |#
