@@ -59,7 +59,7 @@ instead of its content |#
 	(make-instance 'variable :name sexpr :free (list sexpr)))))
 
 (defmethod make-expression ((sexpr symbol)  &optional environment)
-  (make-expression (string-downcase (symbol-name sexpr))))
+  (make-expression (string-downcase (symbol-name sexpr)) environment))
 
 (defmethod free? ((variable string) expression)
   (free? (make-expression variable) expression))

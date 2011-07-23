@@ -56,8 +56,10 @@
 (defvar *zero?* (make-expression `(lambda n (n (lambda x ,*false*) ,*true*))))
 
 (defun unchurch-num (expression)
-  (eval (read-from-string (format nil "(let ((zero 0))(~a)) "
-				  (render (normalize #'normal-order (make-expression (list expression '1+ 'zero))))))))
+  (let ((rendering (render (normalize #'normal-order (make-expression (list expression '1+ 'zero))))))
+    (if (position #\+ rendering)
+	(eval (read-from-string (format nil "(let ((zero 0))(~a))" rendering)))
+	0)))
 
 (defmethod make-expression ((sexpr integer) &optional environment)
   (church-num sexpr))
