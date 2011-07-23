@@ -6,7 +6,10 @@
 (defclass expression ()
   ((free-variables :reader expr-free :initarg :free)))
 
-(defclass variable (expression)
+(defclass scalar (expression) ()
+  (:documentation "Any expression that doesn't contains anything or encapsulates it opaquely"))
+
+(defclass variable (scalar)
   ((name :accessor var-name :initarg :name)))
 
 (defclass abstraction (expression)

@@ -2,7 +2,7 @@
 
 #| Extensions to the lambda-calculus |#
 
-(defclass lisp-function (hidden-abstraction)
+(defclass lisp-function (scalar hidden-abstraction)
   ((function :reader lisp-fun :initarg :fun)))
 
 (defmethod abs-var ((object lisp-function))

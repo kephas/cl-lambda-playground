@@ -1,5 +1,8 @@
 (in-package :thierry-technologies.com/2011/07/lambda)
 
+
+#| Beta reduction |#
+
 (defun var-eq? (var1 var2)
   (equal (var-name var1) (var-name var2)))
 
@@ -21,21 +24,43 @@
       expression))
 
 
+#| Reduction of a known redex |#
+
+(defgeneric contains? (container containee))
+
+(defmethod contains? ((container scalar) containee)
+  (eq container containee))
+
+(defmethod contains? ((container abstraction) containee)
+  (or (eq container containee)
+      (contains? (abs-var container) containee)
+      (contains? (abs-body container) containee)))
+
+(defmethod contains? ((container application) containee)
+  (or (eq container containee)
+      (contains? (app-fun container) containee)
+      (contains? (app-arg container) containee)))
+
+
 (defgeneric reduce-redex (redex expression))
 
 (defmethod reduce-redex (redex (expression variable))
   expression)
 
 (defmethod reduce-redex (redex (expression abstraction))
-  (make-expression (list 'lambda (abs-var expression) (reduce-redex redex (abs-body expression)))))
+  (if (contains? expression redex)
+      (make-expression (list 'lambda (abs-var expression) (reduce-redex redex (abs-body expression))))
+      expression))
 
 (defmethod reduce-redex (redex (expression application))
   (if (eq redex expression)
       (beta-reduce (abs-var (app-fun expression))
 		   (app-arg expression)
 		   (abs-body (app-fun expression)))
-      (make-expression (list (reduce-redex redex (app-fun expression))
-			     (reduce-redex redex (app-arg expression))))))
+      (if (contains? expression redex)
+	  (make-expression (list (reduce-redex redex (app-fun expression))
+				 (reduce-redex redex (app-arg expression))))
+	  expression)))
 
 (defun reduce (strategy expression)
   (let ((redex (funcall strategy expression)))
