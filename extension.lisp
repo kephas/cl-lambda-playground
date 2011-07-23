@@ -6,7 +6,7 @@
   ((function :reader lisp-fun :initarg :fun)))
 
 (defmethod abs-var ((object lisp-function))
-  nil)
+  object) ; for identification purposes, cf. beta-reduce
 
 (defmethod abs-body ((object lisp-function))
   object)
@@ -35,13 +35,15 @@
   (applicative-order (make-expression '#:var) nil (if candidate (cons candidate previous-candidates) previous-candidates)))
 
 (defmethod beta-reduce (variable value (expression lisp-function))
-  (let ((result (funcall (lisp-fun expression) value)))
-    (if (functionp result)
-	(make-instance 'lisp-function :fun result
-		       :name (let ((current (hid-name expression)))
-			       (if (listp current)
-				   (append (butlast current)
-					   (list (render value))
-					   (last current))
-				   (list current (render value) '…))))
-	result)))
+  (if (eq variable expression) ; cf. abs-var
+      (let ((result (funcall (lisp-fun expression) value)))
+	(if (functionp result)
+	    (make-instance 'lisp-function :fun result
+			   :name (let ((current (hid-name expression)))
+				   (if (listp current)
+				       (append (butlast current)
+					       (list (render value))
+					       (last current))
+				       (list current (render value) '…))))
+	    result))
+      expression))
