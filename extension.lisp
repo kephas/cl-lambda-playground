@@ -10,6 +10,9 @@
 
 (defmethod abs-body ((object lisp-function))
   object)
+
+(defmethod expr-free ((object lisp-function))
+  nil)
    
 (defmacro make-function (name args return &body body)
   `(make-instance 'lisp-function :name ,name :fun

@@ -18,6 +18,12 @@
    (argument :accessor app-arg :initarg :arg)))
 
 
+(defgeneric free? (variable expression))
+
+(defmethod free? ((variable variable) (expression expression))
+  (find (var-name variable) (expr-free expression) :test #'string=))
+
+
 #| A hidden abstraction is rendered by its name
 instead of its content |#
 
@@ -40,6 +46,7 @@ instead of its content |#
 (defgeneric make-expression (sexpr &optional environment))
 
 (defmethod make-expression ((sexpr expression) &optional environment)
+  (declare (ignore environment))
   sexpr)
 
 (defmethod make-expression ((sexpr string)  &optional environment)
@@ -50,6 +57,10 @@ instead of its content |#
 
 (defmethod make-expression ((sexpr symbol)  &optional environment)
   (make-expression (string-downcase (symbol-name sexpr))))
+
+(defmethod free? ((variable string) expression)
+  (free? (make-expression variable) expression))
+
 
 (defun free-in-either (expr1 expr2)
   (let ((free1 (expr-free expr1))
