@@ -3,7 +3,7 @@
 (defgeneric render (expression &key rightmost redex))
 
 (defmethod render ((expression abstraction) &key (rightmost t) redex)
-  (let ((rendering (format nil "λ~a.~a" (render (abs-var expression) redex) (render (abs-body expression) redex))))
+  (let ((rendering (format nil "λ~a.~a" (render (abs-var expression)) (render (abs-body expression) :redex redex))))
     (if rightmost rendering (format nil "(~a)" rendering))))
 
 (defmethod render ((expression hidden-abstraction) &key rightmost redex)

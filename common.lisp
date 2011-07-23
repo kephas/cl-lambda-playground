@@ -15,6 +15,11 @@
 (defvar *true* (make-expression '(lambda x (lambda y x))))
 (defvar *false* (make-expression '(lambda x (lambda y y))))
 
+(defun bool->lambda (bool)
+  (make-instance 'hidden-abstraction
+		 :name (if bool "true" "false")
+		 :abs (if bool *true* *false*)))
+
 (defvar *if* (make-expression '(lambda cond (lambda then (lambda else (cond then else))))))
 
 (defvar *and* (make-expression '(lambda p (lambda q (p q p)))))
@@ -32,8 +37,16 @@
 
 (defvar *zero* (make-expression '(lambda f (lambda x x))))
 
+(defun church-num (n &optional (hide? t))
+  (labels ((rec (n acc)
+	     (if (zerop n)
+		 acc
+		 (rec (1- n) (list 'f acc)))))
+    (let ((bare-expression (make-expression `(lambda f (lambda x ,(rec n 'x))))))
+      (if hide? (make-instance 'hidden-abstraction :name n :abs bare-expression) bare-expression))))
+
 (defvar *plus* (make-expression '(lambda m (lambda n (m f (n f x))))))
-(defvar *succ* (normalize #'normal-order (make-expression (list *plus* (church-num 1))))
+(defvar *succ* (normalize #'normal-order (make-expression (list *plus* (church-num 1)))))
 (defvar *pred* (make-expression '(lambda n (lambda f (lambda x (n (lambda g (lambda h (h (g f)))) (lambda u x) (lambda u u)))))))
 (defvar *sub* (make-expression `(lambda m (lambda n (n ,*pred* m)))))
 
@@ -42,19 +55,12 @@
 
 (defvar *zero?* (make-expression `(lambda n (n (lambda x ,*false*) ,*true*))))
 
-(defun church-num (n)
-  (labels ((rec (n acc)
-	     (if (zerop n)
-		 acc
-		 (rec (1- n) (list 'f acc)))))
-    (make-expression `(lambda f (lambda x ,(rec n 'x))))))
-
 (defun unchurch-num (expression)
   (eval (read-from-string (format nil "(let ((zero 0))(~a)) "
 				  (render (normalize #'normal-order (make-expression (list expression '1+ 'zero))))))))
 
 (defmethod make-expression ((sexpr integer) &optional environment)
-  (make-instance 'hidden-abstraction :name sexpr :abs (church-num sexpr)))
+  (church-num sexpr))
 
 
 #| to demonstrate fixed-point combinators |#

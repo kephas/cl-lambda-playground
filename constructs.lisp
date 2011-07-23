@@ -9,8 +9,8 @@
   ((name :accessor var-name :initarg :name)))
 
 (defclass abstraction (expression)
-  ((variable :accessor abs-var :initarg :var)
-   (body :accessor abs-body :initarg :body)))
+  ((variable :accessor abs-var :initarg :var :initform nil)
+   (body :accessor abs-body :initarg :body :initform nil)))
 
 (defclass application (expression)
   ((function :accessor app-fun :initarg :fun)
