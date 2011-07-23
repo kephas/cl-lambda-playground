@@ -12,9 +12,12 @@
 (defmethod render ((expression variable) &key rightmost redex)
   (var-name expression))
 
+(defvar *redex-marker* #\︿)
+
 (defmethod render ((expression application) &key (rightmost t) redex)
-  (format nil (if (eq redex expression) "~a‸~a" "~a ~a")
+  (format nil "~a~a~a"
 	  (render (app-fun expression) :rightmost nil :redex redex)
+	  (if (eq redex expression) *redex-marker* #\space)
 	  (let* ((arg (app-arg expression))
 		 (arg-rendering (render arg :rightmost rightmost :redex redex)))
 	    (if (typep arg 'application)
