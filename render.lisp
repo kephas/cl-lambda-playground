@@ -14,9 +14,9 @@
 
 (defmethod render ((expression application) &key (rightmost t) redex)
   (format nil (if (eq redex expression) "~a‸~a" "~a ~a")
-	  (render (app-fun expression) :rightmost nil)
+	  (render (app-fun expression) :rightmost nil :redex redex)
 	  (let* ((arg (app-arg expression))
-		 (arg-rendering (render arg :rightmost rightmost)))
+		 (arg-rendering (render arg :rightmost rightmost :redex redex)))
 	    (if (typep arg 'application)
 		(format nil "(~a)" arg-rendering)
 		arg-rendering))))
