@@ -20,6 +20,12 @@
 		 :name (if bool "true" "false")
 		 :abs (if bool *true* *false*)))
 
+(defmethod make-expression ((sexpr (eql t)) &optional environment)
+  (bool->lambda sexpr))
+(defmethod make-expression ((sexpr (eql nil)) &optional environment)
+  (bool->lambda sexpr))
+
+
 (defvar *if* (make-expression '(lambda cond (lambda then (lambda else (cond then else))))))
 
 (defvar *and* (make-expression '(lambda p (lambda q (p q p)))))
@@ -29,7 +35,10 @@
 
 #| Fixed-point combinators |#
 
+;supposedly both equivalent (they seem to be, when used)
 (defvar *Y* (make-expression '((lambda p (lambda f (p f (p f)))) (lambda f (lambda x (f (x x)))))))
+(defvar *Z* (make-expression '(lambda f ((lambda x (f (lambda y (x x y)))) (lambda x (f (lambda y (x x y))))))))
+
 (defvar *theta* (make-expression '((lambda q (q q)) (lambda x (lambda y (y (x x y)))))))
 
 
