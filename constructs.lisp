@@ -76,12 +76,8 @@ instead of its content |#
 		    (body (make-expression (third sexpr) environment)))
 		(make-instance 'abstraction :var var :body body
 			       :free (remove-if (lambda (name) (equal name (var-name var))) (expr-free body)))))
-    (t (let ((fun (make-expression (first sexpr) environment))
-	     (arg (make-expression (second sexpr) environment)))
-	 (make-applications-chain
-	  (make-instance 'application :fun fun :arg arg :free (free-in-either fun arg))
-	  (cddr sexpr)
-	  environment)))))
+    (t (let ((fun (make-expression (first sexpr) environment)))
+	 (make-applications-chain fun (rest sexpr) environment)))))
 
 (defun make-applications-chain (fun sexpr &optional environment)
   (if (null sexpr)
