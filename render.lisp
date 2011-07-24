@@ -7,9 +7,11 @@
     (if rightmost rendering (format nil "(~a)" rendering))))
 
 (defmethod render ((expression hidden-abstraction) &key rightmost redex)
+  (declare (ignore rightmost redex))
   (hid-name expression))
 
 (defmethod render ((expression variable) &key rightmost redex)
+  (declare (ignore rightmost redex))
   (var-name expression))
 
 (defvar *redex-marker* #\︿)

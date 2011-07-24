@@ -21,8 +21,10 @@
 		 :abs (if bool *true* *false*)))
 
 (defmethod make-expression ((sexpr (eql t)) &optional environment)
+  (declare (ignore environment))
   (bool->lambda sexpr))
 (defmethod make-expression ((sexpr (eql nil)) &optional environment)
+  (declare (ignore environment))
   (bool->lambda sexpr))
 
 
@@ -71,6 +73,7 @@
 	0)))
 
 (defmethod make-expression ((sexpr integer) &optional environment)
+  (declare (ignore environment))
   (church-num sexpr))
 
 
