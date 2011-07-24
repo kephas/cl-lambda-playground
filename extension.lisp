@@ -26,13 +26,11 @@
 				      (conv-lambda (rec (rest args)))
 				      (conv-lambda `(,return (progn ,@body)))))))))
 
-(defmethod normal-order ((expression abstraction) &optional candidate right-sides)
-  (if candidate
-      candidate
-      (normal-order (make-expression '#:var) nil right-sides)))
+(defmethod normal-order ((expression lisp-function))
+  nil)
 
-(defmethod applicative-order ((expression abstraction) &optional candidate previous-candidates)
-  (applicative-order (make-expression '#:var) nil (if candidate (cons candidate previous-candidates) previous-candidates)))
+(defmethod applicative-order ((expression lisp-function))
+  nil)
 
 (defmethod beta-reduce (variable value (expression lisp-function))
   (if (eq variable expression) ; cf. abs-var

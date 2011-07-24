@@ -71,31 +71,50 @@
 
 #| Evaluation strategies |#
 
-(defgeneric normal-order (expression &optional candidate right-sides))
+(defgeneric beta-candidates? (abstraction value)
+  (:documentation "Is this a possible beta reduction?"))
 
-(defmethod normal-order ((expression variable) &optional candidate right-sides)
-  (when right-sides
-    (normal-order (first right-sides) nil (rest right-sides))))
+(defmethod beta-candidates? (abstraction value)
+  "Base case: nope."
+  nil)
 
-(defmethod normal-order ((expression abstraction) &optional candidate right-sides)
-  (if candidate
-      candidate
-      (normal-order (abs-body expression) nil right-sides)))
-
-(defmethod normal-order ((expression application) &optional candidate right-sides)
-  (normal-order (app-fun expression) expression (cons (app-arg expression) right-sides)))
+(defmethod beta-candidates? ((abstraction abstraction) value)
+  "Beta reducing the application of a value to an actual abstraction does work."
+  t)
 
 
-(defgeneric applicative-order (expression &optional candidate previous-candidates))
+(defgeneric normal-order (expression))
 
-(defmethod applicative-order ((expression variable) &optional candidate previous-candidates)
-  (first previous-candidates))
+(defmethod normal-order ((expression variable))
+  nil)
 
-(defmethod applicative-order ((expression abstraction) &optional candidate previous-candidates)
-  (applicative-order (abs-body expression) nil (if candidate (cons candidate previous-candidates) previous-candidates)))
+(defmethod normal-order ((expression abstraction))
+  (normal-order (abs-body expression)))
 
-(defmethod applicative-order ((expression application) &optional candidate previous-candidates)
-  (applicative-order (app-fun expression) expression previous-candidates))
+(defmethod normal-order ((expression application))
+  (with-accessors ((fun app-fun) (arg app-arg)) expression
+    (if (beta-candidates? fun arg)
+	expression
+	(cif left (normal-order fun)
+	     left
+	     (normal-order arg)))))
+
+
+(defgeneric applicative-order (expression))
+
+(defmethod applicative-order ((expression variable))
+  nil)
+
+(defmethod applicative-order ((expression abstraction))
+  (applicative-order (abs-body expression)))
+
+(defmethod applicative-order ((expression application))
+  (with-accessors ((fun app-fun) (arg app-arg)) expression
+    (cif right (applicative-order arg)
+	 right
+	 (if (beta-candidates? fun arg)
+	     expression
+	     (applicative-order fun)))))
 
 
 #| Finding a normal form |#
