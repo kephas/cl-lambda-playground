@@ -105,10 +105,24 @@
 (defvar *p_zero?* (make-expression '(lambda n (n (lambda x false) true)) booleans))
 (defvar *p_pred* (make-expression `(lambda n (n i ,(peano-num 0))) ski))
 
+(defvar *p_plus* (reduce-until-abstraction (make-expression (list *Y* `(lambda + (lambda m (lambda n (n (lambda p (succ (+ p m))) m)))))
+							    (bind-value "succ" *p_succ* nil))))
+(defvar *p_plus* (reduce-until-abstraction (make-expression (list *Y* `(lambda + (lambda m (lambda n (n (lambda p (pred (+ p m))) m)))))
+							    (bind-value "pred" *p_pred* nil))))
+
+(defvar *p_mult* (reduce-until-abstraction (make-expression (list *Y* `(lambda * (lambda m (lambda n (m (lambda p (+ n (* p n))) ,(peano-num 0))))))
+							    (bind-value "+" *p_plus* nil))))
+(defvar *p_exp* (reduce-until-abstraction (make-expression (list *Y* `(lambda ^ (lambda m (lambda n (m (lambda p (+ n (^ p n))) ,(peano-num 1))))))
+							    (bind-value "*" *p_mult* nil))))
+
 (defvar peano-operators
   (make-environment (("zero?" *p_zero?*)
 		     ("succ" *p_succ*)
-		     ("pred" *p_pred*))))
+		     ("pred" *p_pred*)
+		     ("+" *p_plus*)
+		     ("-" *p_pred*)
+		     ("*" *p_mult*)
+		     ("^" *p_exp*))))
 
 ;;;
 
