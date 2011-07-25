@@ -119,11 +119,12 @@
 
 #| Finding a normal form |#
 
-(defun normalize (strategy expression)
+(defun normalize (strategy expression &optional (count 0))
+  (declare (type (integer 0 *) count))
   (multiple-value-bind (reduction progress) (reduce strategy expression)
     (if progress
-	(normalize strategy reduction)
-	reduction)))
+	(normalize strategy reduction (1+ count))
+	(values reduction (1- count)))))
 
 (defun normalization-steps (strategy expression)
   (labels ((rec (sub-expression acc)
