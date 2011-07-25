@@ -27,7 +27,7 @@
 (defvar *or* (make-expression '(lambda p (lambda q (p p q)))))
 (defvar *not* (make-expression `(lambda x (x ,*false* ,*true*))))
 
-(defvar booleans
+(defvar booleans-operators
   (make-environment (("true" *true*)
 		     ("false" *false*)
 		     ("if" *if*)
@@ -35,6 +35,14 @@
 		     ("or" *or*)
 		     ("not" *not*))))
 
+(defclass booleans (proxy-environment) nil)
+
+(defmethod %make-expression ((sexpr (eql t)) (environment booleans))
+  (%make-expression "true" environment))
+(defmethod %make-expression ((sexpr (eql nil)) (environment booleans))
+  (%make-expression "false" environment))
+  
+(defvar booleans (merge-environments (make-instance 'booleans) booleans-operators))
 
 #| Fixed-point combinators |#
 
