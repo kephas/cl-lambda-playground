@@ -105,6 +105,20 @@
 (defvar *p_zero?* (make-expression '(lambda n (n (lambda x false) true)) booleans))
 (defvar *p_pred* (make-expression `(lambda n (n i ,(peano-num 0))) ski))
 
+(defvar peano-operators
+  (make-environment (("zero?" *p_zero?*)
+		     ("succ" *p_succ*)
+		     ("pred" *p_pred*))))
+
+;;;
+
+(defclass peano (proxy-environment) nil)
+
+(defmethod %make-expression ((sexpr integer) (environment peano))
+  (declare (ignore environment))
+  (peano-num sexpr))
+
+(defvar peano (merge-environments (make-instance 'peano) booleans peano-operators))
 
 #| to demonstrate fixed-point combinators |#
 
