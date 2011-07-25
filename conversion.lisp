@@ -149,4 +149,4 @@
 (defun reduce-until-abstraction (expression &optional (strategy #'normal-order))
   (if (typep expression 'abstraction) ; could be a call to a GF abstraction? to remain free from inheritance
       expression
-      (reduce strategy expression)))
+      (reduce-until-abstraction (reduce strategy expression) strategy)))
