@@ -142,3 +142,11 @@
 		   (read-line *query-io*))
 		 (rec reduction)))))
     (rec expression)))
+
+; this function is used to bind in an environment
+; an abstraction that is initially defined as an application
+; (most notably recursive functions defined as (Y f))
+(defun reduce-until-abstraction (expression &optional (strategy #'normal-order))
+  (if (typep expression 'abstraction) ; could be a call to a GF abstraction? to remain free from inheritance
+      expression
+      (reduce strategy expression)))
