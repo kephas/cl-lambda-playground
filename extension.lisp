@@ -3,13 +3,17 @@
 #| Extensions to the lambda-calculus |#
 
 (defgeneric decode (expression type environment)
-  (:documentation "Returns the Lisp object encoded by the expression in the environment, with type as a hint."))
+  (:documentation "Returns as the primary value the Lisp object encoded by the expression in the environment, with type as a hint.
+Secondary value is T if decoding was actually successful."))
+
+(defmethod decode (expression type environment)
+  (values nil nil))
 
 (defmethod decode ((expression hidden-abstraction) type environment)
-  (hid-name expression))
+  (values (hid-name expression) t))
 
 (defmethod decode ((expression hidden-abstraction) (type (eql 'boolean)) environment)
-  (read-from-string (render (normalize #'normal-order (make-expression (list expr t nil) nil))) nil))
+  (values (read-from-string (render (normalize #'normal-order (make-expression (list expression t nil) nil))) nil) t))
 
 ;;;
 
@@ -20,7 +24,9 @@
   (%type? expression type environment))
 
 (defmethod %type? (expression (type (eql 'numeral)) environment)
-  (typep (decode expression type environment) '(integer 0 *)))
+  (multiple-value-bind (value decoded?) (decode expression type environment)
+    (when decoded?
+      (typep value '(integer 0 *)))))
 
 (defmethod %type? (expression (type (eql 't)) environment)
   t)
@@ -58,6 +64,9 @@
 
 (defmethod applicative-order ((expression lisp-function))
   nil)
+
+(defmethod beta-candidates? ((abstraction lisp-function) value)
+  (type? value (first (lisp-args abstraction))))
 
 (defmethod beta-reduce (variable value (expression lisp-function))
   (if (eq variable expression) ; cf. abs-var
