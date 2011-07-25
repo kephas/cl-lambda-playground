@@ -90,7 +90,7 @@
 
 ;;;
 
-(defclass church (proxy-environment) nil)
+(defclass church (booleans) nil)
 
 (defmethod %make-expression ((sexpr integer) (environment church))
   (declare (ignore environment))
@@ -134,7 +134,7 @@
 
 ;;;
 
-(defclass peano (proxy-environment) nil)
+(defclass peano (booleans) nil)
 
 (defmethod %make-expression ((sexpr integer) (environment peano))
   (declare (ignore environment))
