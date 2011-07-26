@@ -1,0 +1,42 @@
+
+
+
+assigned=Pierre Thierry <pierre@nothos.net>
+
+
+
+
+
+
+creator=Pierre Thierry <pierre@nothos.net>
+
+
+
+
+
+
+severity=minor
+
+
+
+
+
+
+status=open
+
+
+
+
+
+
+summary=reduce-redex has worst case O(n³)
+
+
+
+
+
+
+time=Tue, 26 Jul 2011 02:04:34 +0000
+
+
+
