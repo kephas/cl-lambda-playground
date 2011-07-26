@@ -124,7 +124,7 @@
   (multiple-value-bind (reduction progress) (reduce strategy expression)
     (if progress
 	(normalize strategy reduction (1+ count))
-	(values reduction (1- count)))))
+	(values reduction count))))
 
 (defun normalization-steps (strategy expression)
   (labels ((rec (sub-expression acc)
