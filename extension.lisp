@@ -33,22 +33,22 @@ Secondary value is T if decoding was actually successful."))
 
 ;;;
 
-(defclass lisp-function (scalar hidden-abstraction)
-  ((function :reader lisp-fun :initarg :fun)
-   (argument-types :reader lisp-args :initarg :args)))
+(defclass procedure (scalar hidden-abstraction)
+  ((function :reader proc-fun :initarg :fun)
+   (argument-types :reader proc-args :initarg :args)))
 
-(defmethod abs-var ((object lisp-function))
+(defmethod abs-var ((object procedure))
   object) ; for identification purposes, cf. beta-reduce
 
-(defmethod abs-body ((object lisp-function))
+(defmethod abs-body ((object procedure))
   object)
 
-(defmethod expr-free ((object lisp-function))
+(defmethod expr-free ((object procedure))
   nil)
    
 (defmacro make-function (name args &body body)
   (let ((args (mapcar (lambda (arg) (if (consp arg) arg (list arg t))) args)))
-    `(make-instance 'lisp-function :name ,name :args ',(mapcar #'second args)
+    `(make-instance 'procedure :name ,name :args ',(mapcar #'second args)
 		    :fun ,(named-let rec ((args args))
 				     (destructuring-bind (var type) (first args)
 				       (labels ((conv-lambda (expr)
@@ -59,20 +59,20 @@ Secondary value is T if decoding was actually successful."))
 					     (conv-lambda (rec (rest args)))
 					     (conv-lambda `(make-expression (progn ,@body))))))))))
 
-(defmethod normal-order ((expression lisp-function))
+(defmethod normal-order ((expression procedure))
   nil)
 
-(defmethod applicative-order ((expression lisp-function))
+(defmethod applicative-order ((expression procedure))
   nil)
 
-(defmethod beta-candidates? ((abstraction lisp-function) value)
-  (type? value (first (lisp-args abstraction))))
+(defmethod beta-candidates? ((abstraction procedure) value)
+  (type? value (first (proc-args abstraction))))
 
-(defmethod beta-reduce (variable value (expression lisp-function))
+(defmethod beta-reduce (variable value (expression procedure))
   (if (eq variable expression) ; cf. abs-var
-      (let ((result (funcall (lisp-fun expression) value)))
+      (let ((result (funcall (proc-fun expression) value)))
 	(if (functionp result)
-	    (make-instance 'lisp-function :fun result :args (rest (lisp-args expression))
+	    (make-instance 'procedure :fun result :args (rest (proc-args expression))
 			   :name (let ((current (hid-name expression)))
 				   (if (listp current)
 				       (append (butlast current)
@@ -81,3 +81,17 @@ Secondary value is T if decoding was actually successful."))
 				       (list current (render value) '…))))
 	    result))
       expression))
+
+;;;
+
+(defvar proc-operators
+  (list (make-function "zero?" ((n numeral)) (zerop n))
+	(make-function "succ" ((n numeral)) (1+ n))
+	(make-function "pred" ((n numeral)) (1- n))
+	(make-function "+" ((x numeral) (y numeral)) (+ x y))
+	(make-function "-" ((x numeral) (y numeral)) (- x y))
+	(make-function "*" ((x numeral) (y numeral)) (* x y))
+	(make-function "^" ((x numeral) (y numeral)) (expt x y))))
+
+(defvar proc/church (merge-environments (make-instance 'church) booleans proc-operators))
+(defvar proc/peano (merge-environments (make-instance 'peano) booleans proc-operators))
