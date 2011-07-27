@@ -1,0 +1,7 @@
+* UI
+** Selection
+   One feature would be selection of the next reduction. A one-time
+   strategy is built and reduction is done accordingly.
+** Highlight
+   When moving across terms, selecting an application should highlight
+   it, separating its two parts, idem for a lambda.
