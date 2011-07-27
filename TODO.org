@@ -5,3 +5,6 @@
 ** Highlight
    When moving across terms, selecting an application should highlight
    it, separating its two parts, idem for a lambda.
+   
+   Selecting the first part of an application should highlight the
+   chain of applications, if any.
