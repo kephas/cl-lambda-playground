@@ -7,6 +7,7 @@
 (defvar l1 (make-expression '(lambda x x)))
 (defvar ll1 (make-expression '(lambda x (lambda y x))))
 (defvar ll2 (make-expression '(lambda x (lambda y y))))
+(defvar lll312 (make-expression '(lambda x (lambda y (lambda z (z x y))))))
 
 (defvar *delta* (make-expression '(lambda x (x x))))
 (defvar *omega* (make-expression (list *delta* *delta*)))
@@ -21,7 +22,7 @@
 (defvar *true* ll1)
 (defvar *false* ll2)
 
-(defvar *if* (make-expression '(lambda cond (lambda then (lambda else (cond then else))))))
+(defvar *if* lll312)
 
 (defvar *and* (make-expression '(lambda p (lambda q (p q p)))))
 (defvar *or* (make-expression '(lambda p (lambda q (p p q)))))
@@ -141,6 +142,19 @@
   (peano-num sexpr))
 
 (defvar peano (merge-environments (make-instance 'peano) booleans peano-operators))
+
+#| Pairs (in Church encoding?) |#
+
+(defvar *c_pair* lll312)
+(defvar *c_nil* ll2)
+
+(defun church-list (&rest list)
+  (normalize #'normal-order
+	     (make-expression (named-let rec ((list list))
+				(if list
+				    (list *c_pair* (first list) (rec (rest list)))
+				    "nil"))
+			      (bind-value "nil" *c_nil* *environment*))))
 
 #| to demonstrate fixed-point combinators |#
 
