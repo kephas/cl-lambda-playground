@@ -71,6 +71,14 @@
 
 #| Evaluation strategies |#
 
+; Important design consequence
+; ============================
+; An evaluation strategy is just a function that returns the
+; application that should be reduce next; as everything is based on
+; the identity of applications, no operation should ever reuse an
+; application to create a new expression (or the same application
+; object could be present twice in the syntax tree).
+
 (defgeneric beta-candidates? (abstraction value)
   (:documentation "Is this a possible beta reduction?"))
 
