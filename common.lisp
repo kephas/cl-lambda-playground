@@ -148,6 +148,10 @@
 (defvar *c_pair* lll312)
 (defvar *c_nil* ll2)
 
+(defvar pair-operators
+  (make-environment (("pair" *c_pair*)
+		     ("nil" *c_nil*))))
+
 (defun church-list (&rest list)
   (normalize #'normal-order
 	     (make-expression (named-let rec ((list list))
