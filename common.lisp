@@ -48,10 +48,10 @@
 #| Fixed-point combinators |#
 
 ;supposedly both equivalent (they seem to be, when used)
-(defvar *Y* (make-expression '((lambda p (lambda f (p f (p f)))) (lambda f (lambda x (f (x x)))))))
+(defvar *Y* (reduce-until-abstraction (make-expression '((lambda p (lambda f (p f (p f)))) (lambda f (lambda x (f (x x))))))))
 (defvar *Z* (make-expression '(lambda f ((lambda x (f (lambda y (x x y)))) (lambda x (f (lambda y (x x y))))))))
 
-(defvar *theta* (make-expression '((lambda q (q q)) (lambda x (lambda y (y (x x y)))))))
+(defvar *theta* (reduce-until-abstraction (make-expression '((lambda q (q q)) (lambda x (lambda y (y (x x y))))))))
 
 
 #| Church numerals |#
