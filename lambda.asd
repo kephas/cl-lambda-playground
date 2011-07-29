@@ -7,7 +7,7 @@
   :description "λ-calculus implementation"
   :version "0.0.1"
   :author "Pierre Thierry <pierre@nothos.net>"
-  :licence "GPL"
+  :licence "AGPL"
   :components ((:file "package")
 	       (:file "macros")
 	       (:file "constructs")
