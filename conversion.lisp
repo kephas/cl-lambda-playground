@@ -6,22 +6,37 @@
 (defun var-eq? (var1 var2)
   (equal (var-name var1) (var-name var2)))
 
-(defgeneric beta-reduce (variable value expression))
 
-(defmethod beta-reduce (variable value (expression variable))
+(defgeneric beta-reduce (abstraction value)
+  (:documentation "Takes the appropriate steps to beta-reduce ABSTRACTION with VALUE."))
+
+(defgeneric %beta-reduce (variable value expression)
+  (:documentation "Returns EXPRESSION with VALUE substituted to each free occurrence of VARIABLE."))
+
+
+(defmethod beta-reduce ((abstraction abstraction) value)
+  (%beta-reduce (abs-var abstraction) value (abs-body abstraction)))
+
+(defmethod beta-reduce ((abstraction hidden-abstraction) value)
+  (make-expression (list (hid-abs abstraction) value)))
+
+
+(defmethod %beta-reduce (variable value (expression variable))
   (if (var-eq? variable expression) value expression))
 
-(defmethod beta-reduce (variable value (expression application))
+(defmethod %beta-reduce (variable value (expression application))
   (if (free? variable expression)
-      (make-expression (list (beta-reduce variable value (app-fun expression))
-			     (beta-reduce variable value (app-arg expression))))
+      (make-expression (list (%beta-reduce variable value (app-fun expression))
+			     (%beta-reduce variable value (app-arg expression))))
       expression))
 
-(defmethod beta-reduce (variable value (expression abstraction))
+(defmethod %beta-reduce (variable value (expression abstraction))
   (if (free? variable expression)
       (make-expression (list 'lambda (abs-var expression)
-			     (beta-reduce variable value (abs-body expression))))
+			     (%beta-reduce variable value (abs-body expression))))
       expression))
+
+
 
 
 #| Reduction of a known redex |#
@@ -54,9 +69,8 @@
 
 (defmethod reduce-redex (redex (expression application))
   (if (eq redex expression)
-      (beta-reduce (abs-var (app-fun expression))
-		   (app-arg expression)
-		   (abs-body (app-fun expression)))
+      (beta-reduce (app-fun expression)
+		   (app-arg expression))
       (if (contains? expression redex)
 	  (make-expression (list (reduce-redex redex (app-fun expression))
 				 (reduce-redex redex (app-arg expression))))
