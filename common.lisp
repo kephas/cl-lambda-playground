@@ -73,8 +73,8 @@
 	0)))
 
 (defvar *c_zero?* (make-expression '(lambda n (n (lambda x false) true)) booleans))
-(defvar *c_plus* (make-expression '(lambda m (lambda n (m f (n f x))))))
-(defvar *c_succ* (make-expression '(lambda n (f (n f x)))))
+(defvar *c_plus* (make-expression '(lambda m (lambda n (lambda f (lambda x (m f (n f x))))))))
+(defvar *c_succ* (make-expression '(lambda n (lambda f (lambda x (f (n f x)))))))
 (defvar *c_pred* (make-expression '(lambda n (lambda f (lambda x (n (lambda g (lambda h (h (g f)))) (lambda u x) (lambda u u)))))))
 (defvar *c_sub* (make-expression '(lambda m (lambda n (n pred m))) (bind-value "pred" *c_pred* nil)))
 (defvar *c_mult* (make-expression '(lambda m (lambda n (lambda f (lambda x (m (n f) x)))))))
