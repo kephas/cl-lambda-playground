@@ -17,6 +17,11 @@
 (defmethod beta-reduce ((abstraction abstraction) value)
   (%beta-reduce (abs-var abstraction) value (abs-body abstraction)))
 
+;; beta-reduction has a special case for hidden-abstraction merely for
+;; UI considerations: without it, when doing beta-reduction, the user
+;; has to guess, from the result, what the actual value of the
+;; abstraction was. This method adds a reduction step where the
+;; hidden-abstraction is replaced by the abstraction it hides.
 (defmethod beta-reduce ((abstraction hidden-abstraction) value)
   (make-expression (list (hid-abs abstraction) value)))
 
