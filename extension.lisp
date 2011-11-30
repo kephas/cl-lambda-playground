@@ -68,7 +68,7 @@ Secondary value is T if decoding was actually successful."))
 (defmethod beta-candidates? ((abstraction procedure) value)
   (type? value (first (proc-args abstraction))))
 
-(defmethod beta-reduce (variable value (expression procedure))
+(defmethod %beta-reduce (variable value (expression procedure))
   (if (eq variable expression) ; cf. abs-var
       (let ((result (funcall (proc-fun expression) value)))
 	(if (functionp result)
