@@ -143,7 +143,9 @@ reuse of an application in building a new expression is a special case."
 ;;;
 
 (defclass proxy-environment ()
-  ((bindings :reader env-bindings :initarg :bind :initform nil)))
+  ((bindings :reader env-bindings :initarg :bind :initform nil))
+  (:documentation "The goal of this class is to be subclassed, so that a method for
+%make-expression can be specialized for the subclass."))
 
 (defmethod bound-value (name (environment proxy-environment))
   (bound-value name (env-bindings environment)))
