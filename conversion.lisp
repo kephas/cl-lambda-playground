@@ -178,3 +178,6 @@
   (if (typep expression 'abstraction) ; could be a call to a GF abstraction? to remain free from inheritance
       expression
       (reduce-until-abstraction (reduce strategy expression) strategy)))
+
+(defun make-expression* (sexpr &optional (environment *environment*))
+  (reduce-until-abstraction (%make-expression sexpr environment)))
