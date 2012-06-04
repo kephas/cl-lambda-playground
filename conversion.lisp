@@ -147,6 +147,9 @@
 #| Finding a normal form |#
 
 (defun normalize (strategy expression &optional (count 0))
+  "Reduces EXPRESSION using reduction strategy STRATEGY until
+reduction yields no modification, then returns the resulting
+expression and the number of reduction steps."
   (declare (type (integer 0 *) count))
   (multiple-value-bind (reduction progress) (reduce strategy expression)
     (if progress
@@ -175,9 +178,14 @@
 ; an abstraction that is initially defined as an application
 ; (most notably recursive functions defined as (Y f))
 (defun reduce-until-abstraction (expression &optional (strategy #'normal-order))
+  "Reduces EXPRESSION using reduction strategy STRATEGY until it is an
+abstraction."
   (if (typep expression 'abstraction) ; could be a call to a GF abstraction? to remain free from inheritance
       expression
       (reduce-until-abstraction (reduce strategy expression) strategy)))
 
 (defun make-expression* (sexpr &optional (environment *environment*))
+  "Takes an s-expression, builds the corresponding λ-expression and
+reduces it until it is an abstraction. By default, uses *environment*
+as environment."
   (reduce-until-abstraction (%make-expression sexpr environment)))

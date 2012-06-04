@@ -71,6 +71,8 @@ and the existing bindings of the environment."))
 (defvar *environment* nil)
 
 (defun make-expression (sexpr &optional (environment *environment*))
+  "Takes an s-expression and builds the corresponding λ-expression. By
+default, uses *environment* as environment."
   (%make-expression sexpr environment))
 
 ;;;
