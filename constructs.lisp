@@ -136,7 +136,7 @@ reuse of an application in building a new expression is a special case."
   (remove-duplicates (append env1 env2) :key #'hid-name :test #'equal))
 
 (defmacro make-environment (bindings)
-  (named-let rec ((bindings bindings))
+  (let@ rec ((bindings bindings))
     (when bindings
       (list 'bind-value (caar bindings) (cadar bindings) (rec (cdr bindings))))))
 

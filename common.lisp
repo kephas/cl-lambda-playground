@@ -106,8 +106,8 @@
 (defvar *p_succ* (make-expression '(lambda n (lambda s (lambda z (s n))))))
 
 (defun peano-num (n &optional (hide? t))
-  (let ((bare-expression (normalize #'normal-order (make-expression (named-let rec ((n n)
-										    (acc *p_zero*))
+  (let ((bare-expression (normalize #'normal-order (make-expression (let@ rec ((n n)
+									       (acc *p_zero*))
 								      (if (zerop n) acc (rec (1- n) (list *p_succ* acc))))))))
     (if hide? (make-instance 'hidden-abstraction :name n :abs bare-expression) bare-expression)))
 
@@ -154,7 +154,7 @@
 
 (defun church-list (&rest list)
   (normalize #'normal-order
-	     (make-expression (named-let rec ((list list))
+	     (make-expression (let@ rec ((list list))
 				(if list
 				    (list *c_pair* (first list) (rec (rest list)))
 				    "nil"))

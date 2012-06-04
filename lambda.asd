@@ -5,11 +5,11 @@
 
 (defsystem "lambda"
   :description "λ-calculus implementation"
-  :version "0.0.1"
+  :version "0.0.2"
   :author "Pierre Thierry <pierre@nothos.net>"
   :licence "AGPL"
+  :depends-on ("my-macros")
   :components ((:file "package")
-	       (:file "macros")
 	       (:file "constructs")
 	       (:file "conversion")
 	       (:file "render")
