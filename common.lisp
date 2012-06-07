@@ -7,6 +7,7 @@
 (defvar l1 (make-expression '(lambda x x)))
 (defvar ll1 (make-expression '(lambda x (lambda y x))))
 (defvar ll2 (make-expression '(lambda x (lambda y y))))
+(defvar lll123 (make-expression '(lambda x (lambda y (lambda z (x y z))))))
 (defvar lll312 (make-expression '(lambda x (lambda y (lambda z (z x y))))))
 
 (defvar *delta* (make-expression '(lambda x (x x))))
@@ -22,7 +23,7 @@
 (defvar *true* ll1)
 (defvar *false* ll2)
 
-(defvar *if* lll312)
+(defvar *if* lll123)
 
 (defvar *and* (make-expression '(lambda p (lambda q (p q p)))))
 (defvar *or* (make-expression '(lambda p (lambda q (p p q)))))
