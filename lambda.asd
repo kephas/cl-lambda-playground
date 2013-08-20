@@ -8,7 +8,7 @@
   :version "0.0.2"
   :author "Pierre Thierry <pierre@nothos.net>"
   :licence "AGPL"
-  :depends-on ("thierry-macros")
+  :depends-on ("scheme")
   :components ((:file "package")
 	       (:file "constructs")
 	       (:file "conversion")

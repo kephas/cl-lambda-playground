@@ -82,9 +82,9 @@ default, uses *environment* as environment."
   sexpr)
 
 (defmethod %make-expression ((sexpr string) environment)
-  (cif hidden (bound-value sexpr environment)
-       hidden
-       (make-instance 'variable :name sexpr :free (list sexpr))))
+  (if-let (hidden (bound-value sexpr environment))
+    hidden
+    (make-instance 'variable :name sexpr :free (list sexpr))))
 
 (defmethod %make-expression ((sexpr symbol) environment)
   (make-expression (string-downcase (symbol-name sexpr)) environment))

@@ -1,5 +1,5 @@
 (defpackage :thierry-technologies.com/2011/07/lambda
-  (:use :cl :thierry-technologies.com/2012/01/macros)
+  (:use :cl :scheme)
   (:shadow :variable :reduce)
   (:export #:expression #:expr-free
 	   #:scalar #:variable #:var-name

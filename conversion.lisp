@@ -122,9 +122,9 @@
   (with-accessors ((fun app-fun) (arg app-arg)) expression
     (if (beta-candidates? fun arg)
 	expression
-	(cif left (normal-order fun)
-	     left
-	     (normal-order arg)))))
+	(if-let (left (normal-order fun))
+	  left
+	  (normal-order arg)))))
 
 
 (defgeneric applicative-order (expression))
@@ -137,11 +137,11 @@
 
 (defmethod applicative-order ((expression application))
   (with-accessors ((fun app-fun) (arg app-arg)) expression
-    (cif right (applicative-order arg)
-	 right
-	 (if (beta-candidates? fun arg)
-	     expression
-	     (applicative-order fun)))))
+    (if-let (right (applicative-order arg))
+      right
+      (if (beta-candidates? fun arg)
+	  expression
+	  (applicative-order fun)))))
 
 
 #| Finding a normal form |#
